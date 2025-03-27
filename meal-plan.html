@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Meal Plan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --accent-color: #f50057;
+            --text-color: #2C3E50;
+            --text-light: #7F8C8D;
+            --background-color: #f5f5f5;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --success-color: #2e7d32;
+            --warning-color: #f57c00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .meal-plan {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .meal-card {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .meal-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .meal-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meal-card h3 i {
+            color: var(--accent-color);
+        }
+
+        .meal-info {
+            margin-bottom: 1rem;
+        }
+
+        .meal-info p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .meal-info .calories {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .ingredients {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .ingredients h4 {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredients ul {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .ingredients li {
+            margin-bottom: 0.3rem;
+            position: relative;
+        }
+
+        .ingredients li::before {
+            content: '•';
+            color: var(--accent-color);
+            position: absolute;
+            left: -1rem;
+        }
+
+        .macros {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .macro-item {
+            text-align: center;
+            padding: 0.5rem;
+            background: rgba(57, 73, 171, 0.1);
+            border-radius: 8px;
+        }
+
+        .macro-item .value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .macro-item .label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .meal-timing {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .meal-timing i {
+            color: var(--warning-color);
+        }
+
+        .prep-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .prep-time i {
+            color: var(--success-color);
+        }
+
+        .dietary-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .dietary-tag {
+            background: rgba(57, 73, 171, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-top: 2rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .nutrition-summary {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .nutrition-summary h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nutrition-summary h2 i {
+            color: var(--accent-color);
+        }
+
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .nutrition-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(57, 73, 171, 0.1);
+            border-radius: 10px;
+        }
+
+        .nutrition-item .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .nutrition-item .label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .meal-plan {
+                grid-template-columns: 1fr;
+            }
+
+            .nutrition-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #121212;
+                --card-background: #1e1e1e;
+                --text-color: #ffffff;
+                --text-light: #b0b0b0;
+                --border-color: #2d2d2d;
+            }
+
+            .meal-card, .nutrition-summary {
+                background: var(--card-background);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            .macro-item, .nutrition-item {
+                background: rgba(92, 107, 192, 0.1);
+            }
+
+            .dietary-tag {
+                background: rgba(92, 107, 192, 0.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Your Personalized Meal Plan</h1>
+            <p>Based on your fitness goals and dietary preferences</p>
+        </div>
+
+        <div class="nutrition-summary">
+            <h2><i class="fas fa-chart-pie"></i> Daily Nutrition Targets</h2>
+            <div class="nutrition-grid" id="nutritionSummary">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="meal-plan" id="mealPlan">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <a href="workout-plan.html" class="btn">
+            <i class="fas fa-dumbbell"></i>
+            View Your Workout Plan
+        </a>
+    </div>
+
+    <script>
+        // Sample meal data based on dietary preferences
+        const mealDatabase = {
+            omnivore: {
+                breakfast: [
+                    {
+                        name: "Protein-Packed Breakfast Bowl",
+                        calories: 450,
+                        macros: { protein: 35, carbs: 45, fat: 20 },
+                        ingredients: [
+                            "2 eggs",
+                            "1 cup quinoa",
+                            "1 avocado",
+                            "1 cup spinach",
+                            "1 tbsp olive oil"
+                        ],
+                        prepTime: "15 minutes",
+                        dietaryTags: ["High Protein", "Gluten-Free"]
+                    },
+                    {
+                        name: "Overnight Oats with Berries",
+                        calories: 400,
+                        macros: { protein: 20, carbs: 60, fat: 15 },
+                        ingredients: [
+                            "1 cup rolled oats",
+                            "1 cup almond milk",
+                            "1 scoop protein powder",
+                            "1 cup mixed berries",
+                            "1 tbsp chia seeds"
+                        ],
+                        prepTime: "5 minutes (overnight)",
+                        dietaryTags: ["Vegetarian", "High Fiber"]
+                    }
+                ],
+                lunch: [
+                    {
+                        name: "Grilled Chicken Salad",
+                        calories: 500,
+                        macros: { protein: 40, carbs: 35, fat: 25 },
+                        ingredients: [
+                            "200g grilled chicken breast",
+                            "2 cups mixed greens",
+                            "1 avocado",
+                            "1/2 cup cherry tomatoes",
+                            "2 tbsp olive oil"
+                        ],
+                        prepTime: "20 minutes",
+                        dietaryTags: ["High Protein", "Low Carb"]
+                    }
+                ],
+                dinner: [
+                    {
+                        name: "Salmon with Roasted Vegetables",
+                        calories: 550,
+                        macros: { protein: 45, carbs: 30, fat: 30 },
+                        ingredients: [
+                            "200g salmon fillet",
+                            "2 cups mixed vegetables",
+                            "1 tbsp olive oil",
+                            "1 lemon",
+                            "Fresh herbs"
+                        ],
+                        prepTime: "25 minutes",
+                        dietaryTags: ["High Protein", "Omega-3"]
+                    }
+                ]
+            },
+            vegetarian: {
+                breakfast: [
+                    {
+                        name: "Tofu Scramble Bowl",
+                        calories: 400,
+                        macros: { protein: 25, carbs: 45, fat: 20 },
+                        ingredients: [
+                            "200g firm tofu",
+                            "1 cup quinoa",
+                            "1 cup spinach",
+                            "1 bell pepper",
+                            "1 tbsp olive oil"
+                        ],
+                        prepTime: "20 minutes",
+                        dietaryTags: ["Vegetarian", "High Protein"]
+                    }
+                ],
+                lunch: [
+                    {
+                        name: "Mediterranean Quinoa Bowl",
+                        calories: 450,
+                        macros: { protein: 20, carbs: 60, fat: 20 },
+                        ingredients: [
+                            "1 cup quinoa",
+                            "1 cup chickpeas",
+                            "1 cucumber",
+                            "1/2 cup olives",
+                            "2 tbsp olive oil"
+                        ],
+                        prepTime: "15 minutes",
+                        dietaryTags: ["Vegetarian", "High Fiber"]
+                    }
+                ],
+                dinner: [
+                    {
+                        name: "Lentil Curry with Rice",
+                        calories: 500,
+                        macros: { protein: 25, carbs: 70, fat: 15 },
+                        ingredients: [
+                            "1 cup lentils",
+                            "1 cup brown rice",
+                            "1 can coconut milk",
+                            "Curry powder",
+                            "Fresh vegetables"
+                        ],
+                        prepTime: "30 minutes",
+                        dietaryTags: ["Vegetarian", "High Protein"]
+                    }
+                ]
+            },
+            vegan: {
+                breakfast: [
+                    {
+                        name: "Vegan Protein Smoothie Bowl",
+                        calories: 400,
+                        macros: { protein: 20, carbs: 60, fat: 15 },
+                        ingredients: [
+                            "1 banana",
+                            "1 cup almond milk",
+                            "1 scoop vegan protein powder",
+                            "1 cup spinach",
+                            "1 tbsp chia seeds"
+                        ],
+                        prepTime: "10 minutes",
+                        dietaryTags: ["Vegan", "High Protein"]
+                    }
+                ],
+                lunch: [
+                    {
+                        name: "Buddha Bowl",
+                        calories: 450,
+                        macros: { protein: 20, carbs: 65, fat: 15 },
+                        ingredients: [
+                            "1 cup quinoa",
+                            "1 cup chickpeas",
+                            "1 avocado",
+                            "Mixed vegetables",
+                            "Tahini dressing"
+                        ],
+                        prepTime: "20 minutes",
+                        dietaryTags: ["Vegan", "High Fiber"]
+                    }
+                ],
+                dinner: [
+                    {
+                        name: "Vegan Stir-Fry",
+                        calories: 500,
+                        macros: { protein: 25, carbs: 70, fat: 15 },
+                        ingredients: [
+                            "1 cup brown rice",
+                            "Tofu",
+                            "Mixed vegetables",
+                            "Soy sauce",
+                            "Ginger and garlic"
+                        ],
+                        prepTime: "25 minutes",
+                        dietaryTags: ["Vegan", "High Protein"]
+                    }
+                ]
+            },
+            pescatarian: {
+                breakfast: [
+                    {
+                        name: "Smoked Salmon Breakfast",
+                        calories: 450,
+                        macros: { protein: 30, carbs: 40, fat: 25 },
+                        ingredients: [
+                            "100g smoked salmon",
+                            "2 eggs",
+                            "1 avocado",
+                            "Whole grain toast",
+                            "Fresh herbs"
+                        ],
+                        prepTime: "15 minutes",
+                        dietaryTags: ["High Protein", "Omega-3"]
+                    }
+                ],
+                lunch: [
+                    {
+                        name: "Tuna Poke Bowl",
+                        calories: 500,
+                        macros: { protein: 35, carbs: 45, fat: 25 },
+                        ingredients: [
+                            "200g tuna",
+                            "1 cup brown rice",
+                            "1 avocado",
+                            "Seaweed",
+                            "Soy sauce"
+                        ],
+                        prepTime: "20 minutes",
+                        dietaryTags: ["High Protein", "Omega-3"]
+                    }
+                ],
+                dinner: [
+                    {
+                        name: "Grilled Shrimp with Vegetables",
+                        calories: 550,
+                        macros: { protein: 40, carbs: 35, fat: 30 },
+                        ingredients: [
+                            "200g shrimp",
+                            "Mixed vegetables",
+                            "1 tbsp olive oil",
+                            "Lemon",
+                            "Fresh herbs"
+                        ],
+                        prepTime: "25 minutes",
+                        dietaryTags: ["High Protein", "Low Carb"]
+                    }
+                ]
+            }
+        };
+
+        // Function to filter meals based on dietary preference
+        function filterMealsByDietaryPreference(meals, dietaryPreference) {
+            return meals.filter(meal => {
+                switch (dietaryPreference) {
+                    case 'vegan':
+                        return !meal.ingredients.some(ingredient => 
+                            ingredient.toLowerCase().includes('meat') ||
+                            ingredient.toLowerCase().includes('chicken') ||
+                            ingredient.toLowerCase().includes('fish') ||
+                            ingredient.toLowerCase().includes('egg') ||
+                            ingredient.toLowerCase().includes('dairy') ||
+                            ingredient.toLowerCase().includes('cheese') ||
+                            ingredient.toLowerCase().includes('milk') ||
+                            ingredient.toLowerCase().includes('yogurt')
+                        );
+                    case 'vegetarian':
+                        return !meal.ingredients.some(ingredient => 
+                            ingredient.toLowerCase().includes('meat') ||
+                            ingredient.toLowerCase().includes('chicken') ||
+                            ingredient.toLowerCase().includes('fish')
+                        );
+                    case 'pescatarian':
+                        return !meal.ingredients.some(ingredient => 
+                            ingredient.toLowerCase().includes('meat') ||
+                            ingredient.toLowerCase().includes('chicken')
+                        );
+                    default: // omnivore
+                        return true;
+                }
+            });
+        }
+
+        // Function to generate meal plan
+        function generateMealPlan() {
+            const userData = JSON.parse(localStorage.getItem('fitnessData'));
+            if (!userData) {
+                window.location.href = 'fitness.html';
+                return;
+            }
+
+            // Update nutrition summary
+            const nutritionSummary = document.getElementById('nutritionSummary');
+            nutritionSummary.innerHTML = `
+                <div class="nutrition-item">
+                    <div class="value">${userData.targetCalories}</div>
+                    <div class="label">Daily Calories</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="value">${userData.macros.protein}g</div>
+                    <div class="label">Protein</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="value">${userData.macros.carbs}g</div>
+                    <div class="label">Carbs</div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="value">${userData.macros.fat}g</div>
+                    <div class="label">Fat</div>
+                </div>
+            `;
+
+            const mealContainer = document.getElementById('mealPlan');
+            mealContainer.innerHTML = '';
+
+            // Get meals for the user's dietary preference
+            const userDietaryPreference = userData.dietaryPreference;
+            const meals = mealDatabase[userDietaryPreference];
+
+            // Generate meal cards for each meal type
+            Object.entries(meals).forEach(([mealType, mealOptions]) => {
+                const meal = mealOptions[0]; // Select first meal option for each type
+                const mealCard = document.createElement('div');
+                mealCard.className = 'meal-card';
+                
+                mealCard.innerHTML = `
+                    <h3><i class="fas fa-utensils"></i> ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}</h3>
+                    <div class="meal-timing">
+                        <i class="fas fa-clock"></i>
+                        ${mealType === 'breakfast' ? '7:00 AM' : mealType === 'lunch' ? '12:00 PM' : '7:00 PM'}
+                    </div>
+                    <div class="meal-info">
+                        <p>${meal.name}</p>
+                        <p>Calories: <span class="calories">${meal.calories}</span></p>
+                    </div>
+                    <div class="macros">
+                        <div class="macro-item">
+                            <div class="value">${meal.macros.protein}g</div>
+                            <div class="label">Protein</div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="value">${meal.macros.carbs}g</div>
+                            <div class="label">Carbs</div>
+                        </div>
+                        <div class="macro-item">
+                            <div class="value">${meal.macros.fat}g</div>
+                            <div class="label">Fat</div>
+                        </div>
+                    </div>
+                    <div class="prep-time">
+                        <i class="fas fa-hourglass-half"></i>
+                        Prep time: ${meal.prepTime}
+                    </div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            ${meal.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="dietary-tags">
+                        ${meal.dietaryTags.map(tag => `<span class="dietary-tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                
+                mealContainer.appendChild(mealCard);
+            });
+        }
+
+        // Initialize meal plan when page loads
+        document.addEventListener('DOMContentLoaded', generateMealPlan);
+    </script>
+</body>
+</html> 

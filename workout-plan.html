@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Workout Plan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --accent-color: #f50057;
+            --text-color: #2C3E50;
+            --text-light: #7F8C8D;
+            --background-color: #f5f5f5;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --success-color: #2e7d32;
+            --warning-color: #f57c00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .workout-plan {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .workout-card {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .workout-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .workout-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .workout-card h3 i {
+            color: var(--accent-color);
+        }
+
+        .workout-info {
+            margin-bottom: 1rem;
+        }
+
+        .workout-info p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .workout-info .duration {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .exercises {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .exercises h4 {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .exercises ul {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .exercises li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .exercises li::before {
+            content: '•';
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .exercise-details {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-left: 1.5rem;
+        }
+
+        .workout-timing {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .workout-timing i {
+            color: var(--warning-color);
+        }
+
+        .difficulty {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .difficulty i {
+            color: var(--success-color);
+        }
+
+        .workout-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .workout-tag {
+            background: rgba(57, 73, 171, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-top: 2rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .workout-summary {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .workout-summary h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .workout-summary h2 i {
+            color: var(--accent-color);
+        }
+
+        .workout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .workout-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(57, 73, 171, 0.1);
+            border-radius: 10px;
+        }
+
+        .workout-item .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .workout-item .label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .week-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .week-btn {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 25px;
+            background: transparent;
+            color: var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .week-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .week-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .nav-buttons .btn {
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .workout-plan {
+                grid-template-columns: 1fr;
+            }
+
+            .workout-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .week-selector {
+                flex-direction: column;
+            }
+
+            .week-btn {
+                width: 100%;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .nav-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #121212;
+                --card-background: #1e1e1e;
+                --text-color: #ffffff;
+                --text-light: #b0b0b0;
+                --border-color: #2d2d2d;
+            }
+
+            .workout-card, .workout-summary {
+                background: var(--card-background);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            .workout-item {
+                background: rgba(92, 107, 192, 0.1);
+            }
+
+            .workout-tag {
+                background: rgba(92, 107, 192, 0.1);
+            }
+
+            .week-btn {
+                border-color: var(--secondary-color);
+                color: var(--secondary-color);
+            }
+
+            .week-btn.active {
+                background: var(--secondary-color);
+                color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Your Personalized Workout Plan</h1>
+            <p>Based on your fitness goals and experience level</p>
+        </div>
+
+        <div class="workout-summary">
+            <h2><i class="fas fa-chart-line"></i> Weekly Workout Overview</h2>
+            <div class="workout-grid" id="workoutSummary">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="week-selector">
+            <button class="week-btn active" onclick="switchWeek('A')">Week A</button>
+            <button class="week-btn" onclick="switchWeek('B')">Week B</button>
+        </div>
+
+        <div class="workout-plan" id="workoutPlan">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <div class="nav-buttons">
+            <a href="meal-plan.html" class="btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Meal Plan
+            </a>
+            <a href="results.html" class="btn">
+                <i class="fas fa-chart-bar"></i>
+                View Progress
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Sample workout data based on experience level and goals
+        const workoutDatabase = {
+            beginner: {
+                'weight-loss': {
+                    'push': {
+                        'A': {
+                            name: "Push Day A",
+                            duration: "45 minutes",
+                            exercises: [
+                                {
+                                    name: "Push-ups (Knee)",
+                                    details: "3 sets of 8-12 reps"
+                                },
+                                {
+                                    name: "Dumbbell Shoulder Press",
+                                    details: "3 sets of 10-12 reps"
+                                },
+                                {
+                                    name: "Tricep Dips",
+                                    details: "3 sets of 8-12 reps"
+                                }
+                            ],
+                            difficulty: "Beginner",
+                            tags: ["Push", "Upper Body", "Strength"]
+                        },
+                        'B': {
+                            name: "Push Day B",
+                            duration: "45 minutes",
+                            exercises: [
+                                {
+                                    name: "Incline Push-ups",
+                                    details: "3 sets of 8-12 reps"
+                                },
+                                {
+                                    name: "Lateral Raises",
+                                    details: "3 sets of 12-15 reps"
+                                },
+                                {
+                                    name: "Tricep Extensions",
+                                    details: "3 sets of 10-12 reps"
+                                }
+                            ],
+                            difficulty: "Beginner",
+                            tags: ["Push", "Upper Body", "Strength"]
+                        }
+                    },
+                    'pull': {
+                        'A': {
+                            name: "Pull Day A",
+                            duration: "45 minutes",
+                            exercises: [
+                                {
+                                    name: "Assisted Pull-ups",
+                                    details: "3 sets of 6-8 reps"
+                                },
+                                {
+                                    name: "Dumbbell Rows",
+                                    details: "3 sets of 10-12 reps"
+                                },
+                                {
+                                    name: "Face Pulls",
+                                    details: "3 sets of 12-15 reps"
+                                }
+                            ],
+                            difficulty: "Beginner",
+                            tags: ["Pull", "Upper Body", "Strength"]
+                        },
+                        'B': {
+                            name: "Pull Day B",
+                            duration: "45 minutes",
+                            exercises: [
+                                {
+                                    name: "Lat Pulldowns",
+                                    details: "3 sets of 10-12 reps"
+                                },
+                                {
+                                    name: "Seated Rows",
+                                    details: "3 sets of 10-12 reps"
+                                },
+                                {
+                                    name: "Bicep Curls",
+                                    details: "3 sets of 12-15 reps"
+                                }
+                            ],
+                            difficulty: "Beginner",
+                            tags: ["Pull", "Upper Body", "Strength"]
+                        }
+                    },
+                    'legs': {
+                        'A': {
+                            name: "Leg Day A",
+                            duration: "45 minutes",
+                            exercises: [
+                                {
+                                    name: "Bodyweight Squats",
+                                    details: "3 sets of 12-15 reps"
+                                },
+                                {
+                                    name: "Romanian Deadlifts",
+                                    details: "3 sets of 10-12 reps"
+                                },
+                                {
+                                    name: "Calf Raises",
+                                    details: "3 sets of 15-20 reps"
+                                }
+                            ],
+                            difficulty: "Beginner",
+                            tags: ["Legs", "Lower Body", "Strength"]
+                        },
+                        'B': {
+                            name: "Leg Day B",
+                            duration: "45 minutes",
+                            exercises: [
+                                {
+                                    name: "Lunges",
+                                    details: "3 sets of 10-12 reps each leg"
+                                },
+                                {
+                                    name: "Leg Extensions",
+                                    details: "3 sets of 12-15 reps"
+                                },
+                                {
+                                    name: "Seated Calf Raises",
+                                    details: "3 sets of 15-20 reps"
+                                }
+                            ],
+                            difficulty: "Beginner",
+                            tags: ["Legs", "Lower Body", "Strength"]
+                        }
+                    }
+                },
+                'muscle-gain': {
+                    'push': {
+                        name: "Push Day A",
+                        duration: "60 minutes",
+                        exercises: [
+                            {
+                                name: "Bench Press",
+                                details: "4 sets of 8-12 reps"
+                            },
+                            {
+                                name: "Overhead Press",
+                                details: "4 sets of 8-12 reps"
+                            },
+                            {
+                                name: "Lateral Raises",
+                                details: "4 sets of 12-15 reps"
+                            }
+                        ],
+                        difficulty: "Beginner",
+                        tags: ["Push", "Upper Body", "Strength"]
+                    },
+                    'pull': {
+                        name: "Pull Day A",
+                        duration: "60 minutes",
+                        exercises: [
+                            {
+                                name: "Barbell Rows",
+                                details: "4 sets of 8-12 reps"
+                            },
+                            {
+                                name: "Pull-ups",
+                                details: "4 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Face Pulls",
+                                details: "4 sets of 12-15 reps"
+                            }
+                        ],
+                        difficulty: "Beginner",
+                        tags: ["Pull", "Upper Body", "Strength"]
+                    },
+                    'legs': {
+                        name: "Leg Day A",
+                        duration: "60 minutes",
+                        exercises: [
+                            {
+                                name: "Barbell Squats",
+                                details: "4 sets of 8-12 reps"
+                            },
+                            {
+                                name: "Romanian Deadlifts",
+                                details: "4 sets of 8-12 reps"
+                            },
+                            {
+                                name: "Leg Press",
+                                details: "4 sets of 10-12 reps"
+                            }
+                        ],
+                        difficulty: "Beginner",
+                        tags: ["Legs", "Lower Body", "Strength"]
+                    }
+                }
+            },
+            intermediate: {
+                'weight-loss': {
+                    'push': {
+                        name: "Push Day A",
+                        duration: "60 minutes",
+                        exercises: [
+                            {
+                                name: "Bench Press",
+                                details: "4 sets of 8-12 reps"
+                            },
+                            {
+                                name: "Overhead Press",
+                                details: "4 sets of 8-12 reps"
+                            },
+                            {
+                                name: "Incline Dumbbell Press",
+                                details: "4 sets of 10-12 reps"
+                            }
+                        ],
+                        difficulty: "Intermediate",
+                        tags: ["Push", "Upper Body", "Strength"]
+                    },
+                    'pull': {
+                        name: "Pull Day A",
+                        duration: "60 minutes",
+                        exercises: [
+                            {
+                                name: "Barbell Rows",
+                                details: "4 sets of 8-12 reps"
+                            },
+                            {
+                                name: "Pull-ups",
+                                details: "4 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Face Pulls",
+                                details: "4 sets of 12-15 reps"
+                            }
+                        ],
+                        difficulty: "Intermediate",
+                        tags: ["Pull", "Upper Body", "Strength"]
+                    },
+                    'legs': {
+                        name: "Leg Day A",
+                        duration: "60 minutes",
+                        exercises: [
+                            {
+                                name: "Barbell Squats",
+                                details: "4 sets of 8-12 reps"
+                            },
+                            {
+                                name: "Romanian Deadlifts",
+                                details: "4 sets of 8-12 reps"
+                            },
+                            {
+                                name: "Leg Press",
+                                details: "4 sets of 10-12 reps"
+                            }
+                        ],
+                        difficulty: "Intermediate",
+                        tags: ["Legs", "Lower Body", "Strength"]
+                    }
+                },
+                'muscle-gain': {
+                    'push': {
+                        name: "Push Day A",
+                        duration: "75 minutes",
+                        exercises: [
+                            {
+                                name: "Bench Press",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Overhead Press",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Incline Dumbbell Press",
+                                details: "4 sets of 8-10 reps"
+                            }
+                        ],
+                        difficulty: "Intermediate",
+                        tags: ["Push", "Upper Body", "Strength"]
+                    },
+                    'pull': {
+                        name: "Pull Day A",
+                        duration: "75 minutes",
+                        exercises: [
+                            {
+                                name: "Barbell Rows",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Weighted Pull-ups",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Face Pulls",
+                                details: "4 sets of 12-15 reps"
+                            }
+                        ],
+                        difficulty: "Intermediate",
+                        tags: ["Pull", "Upper Body", "Strength"]
+                    },
+                    'legs': {
+                        name: "Leg Day A",
+                        duration: "75 minutes",
+                        exercises: [
+                            {
+                                name: "Barbell Squats",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Romanian Deadlifts",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Leg Press",
+                                details: "4 sets of 8-10 reps"
+                            }
+                        ],
+                        difficulty: "Intermediate",
+                        tags: ["Legs", "Lower Body", "Strength"]
+                    }
+                }
+            },
+            advanced: {
+                'weight-loss': {
+                    'push': {
+                        name: "Push Day A",
+                        duration: "75 minutes",
+                        exercises: [
+                            {
+                                name: "Bench Press",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Overhead Press",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Incline Dumbbell Press",
+                                details: "4 sets of 8-10 reps"
+                            }
+                        ],
+                        difficulty: "Advanced",
+                        tags: ["Push", "Upper Body", "Strength"]
+                    },
+                    'pull': {
+                        name: "Pull Day A",
+                        duration: "75 minutes",
+                        exercises: [
+                            {
+                                name: "Barbell Rows",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Weighted Pull-ups",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Face Pulls",
+                                details: "4 sets of 12-15 reps"
+                            }
+                        ],
+                        difficulty: "Advanced",
+                        tags: ["Pull", "Upper Body", "Strength"]
+                    },
+                    'legs': {
+                        name: "Leg Day A",
+                        duration: "75 minutes",
+                        exercises: [
+                            {
+                                name: "Barbell Squats",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Romanian Deadlifts",
+                                details: "5 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Leg Press",
+                                details: "4 sets of 8-10 reps"
+                            }
+                        ],
+                        difficulty: "Advanced",
+                        tags: ["Legs", "Lower Body", "Strength"]
+                    }
+                },
+                'muscle-gain': {
+                    'push': {
+                        name: "Push Day A",
+                        duration: "90 minutes",
+                        exercises: [
+                            {
+                                name: "Bench Press",
+                                details: "6 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Overhead Press",
+                                details: "6 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Incline Dumbbell Press",
+                                details: "5 sets of 8-10 reps"
+                            }
+                        ],
+                        difficulty: "Advanced",
+                        tags: ["Push", "Upper Body", "Strength"]
+                    },
+                    'pull': {
+                        name: "Pull Day A",
+                        duration: "90 minutes",
+                        exercises: [
+                            {
+                                name: "Barbell Rows",
+                                details: "6 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Weighted Pull-ups",
+                                details: "6 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Face Pulls",
+                                details: "5 sets of 12-15 reps"
+                            }
+                        ],
+                        difficulty: "Advanced",
+                        tags: ["Pull", "Upper Body", "Strength"]
+                    },
+                    'legs': {
+                        name: "Leg Day A",
+                        duration: "90 minutes",
+                        exercises: [
+                            {
+                                name: "Barbell Squats",
+                                details: "6 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Romanian Deadlifts",
+                                details: "6 sets of 6-8 reps"
+                            },
+                            {
+                                name: "Leg Press",
+                                details: "5 sets of 8-10 reps"
+                            }
+                        ],
+                        difficulty: "Advanced",
+                        tags: ["Legs", "Lower Body", "Strength"]
+                    }
+                }
+            }
+        };
+
+        let currentWeek = 'A';
+
+        // Function to switch between Week A and B
+        function switchWeek(week) {
+            currentWeek = week;
+            document.querySelectorAll('.week-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === `Week ${week}`) {
+                    btn.classList.add('active');
+                }
+            });
+            generateWorkoutPlan();
+        }
+
+        // Function to generate workout plan
+        function generateWorkoutPlan() {
+            const userData = JSON.parse(localStorage.getItem('fitnessData'));
+            if (!userData) {
+                window.location.href = 'fitness.html';
+                return;
+            }
+
+            const workoutContainer = document.getElementById('workoutPlan');
+            workoutContainer.innerHTML = '';
+
+            // Get current week (A or B)
+            const currentWeek = document.querySelector('.week-selector button.active').textContent.trim();
+            const weekKey = currentWeek === 'Week A' ? 'A' : 'B';
+
+            // Generate workout cards for each type
+            ['Push', 'Pull', 'Legs'].forEach(type => {
+                const workoutCard = document.createElement('div');
+                workoutCard.className = 'workout-card';
+                
+                const workoutData = workoutDatabase[userData.experienceLevel][userData.fitnessGoal][type.toLowerCase()][weekKey];
+                
+                workoutCard.innerHTML = `
+                    <h3>${workoutData.name}</h3>
+                    <div class="workout-info">
+                        <p><i class="fas fa-clock"></i> Duration: ${workoutData.duration}</p>
+                        <p><i class="fas fa-dumbbell"></i> ${workoutData.exercises.length} exercises</p>
+                    </div>
+                    <div class="exercises">
+                        ${workoutData.exercises.map(exercise => `
+                            <div class="exercise">
+                                <h4>${exercise.name}</h4>
+                                <p>${exercise.details}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="workout-tags">
+                        ${workoutData.tags.map(tag => `<span class="workout-tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                
+                workoutContainer.appendChild(workoutCard);
+            });
+
+            // Update workout summary
+            const summaryContainer = document.getElementById('workoutSummary');
+            summaryContainer.innerHTML = `
+                <div class="workout-item">
+                    <div class="value">3</div>
+                    <div class="label">Workouts per Week</div>
+                </div>
+                <div class="workout-item">
+                    <div class="value">${workoutData.duration}</div>
+                    <div class="label">Duration per Workout</div>
+                </div>
+                <div class="workout-item">
+                    <div class="value">${userData.experienceLevel}</div>
+                    <div class="label">Experience Level</div>
+                </div>
+            `;
+        }
+
+        // Add event listeners for week switching
+        document.querySelectorAll('.week-selector button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                document.querySelectorAll('.week-selector button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Regenerate workout plan
+                generateWorkoutPlan();
+            });
+        });
+
+        // Initialize workout plan when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set Week A as active by default
+            document.querySelector('.week-selector button:first-child').classList.add('active');
+            generateWorkoutPlan();
+        });
+    </script>
+</body>
+</html> 

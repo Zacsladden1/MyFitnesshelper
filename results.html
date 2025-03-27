@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Progress Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --accent-color: #f50057;
+            --text-color: #2C3E50;
+            --text-light: #7F8C8D;
+            --background-color: #f5f5f5;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --success-color: #2e7d32;
+            --warning-color: #f57c00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .progress-card {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .progress-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .progress-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-card h3 i {
+            color: var(--accent-color);
+        }
+
+        .progress-info {
+            margin-bottom: 1rem;
+        }
+
+        .progress-info p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-value {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            transition: width 0.3s ease;
+        }
+
+        .progress-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .progress-tag {
+            background: rgba(57, 73, 171, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-top: 2rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .progress-summary {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-summary h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-summary h2 i {
+            color: var(--accent-color);
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .progress-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(57, 73, 171, 0.1);
+            border-radius: 10px;
+        }
+
+        .progress-item .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-item .label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .progress-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #121212;
+                --card-background: #1e1e1e;
+                --text-color: #ffffff;
+                --text-light: #b0b0b0;
+                --border-color: #2d2d2d;
+            }
+
+            .progress-card, .progress-summary {
+                background: var(--card-background);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            .progress-item {
+                background: rgba(92, 107, 192, 0.1);
+            }
+
+            .progress-tag {
+                background: rgba(92, 107, 192, 0.1);
+            }
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .nav-buttons .btn {
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .nav-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .weight-input {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .weight-input input {
+            width: 100px;
+            padding: 0.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .weight-input button {
+            padding: 0.5rem 1rem;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .weight-input button:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .weight-history {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .weight-history h4 {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .weight-history ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .weight-history li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .weight-history li:last-child {
+            border-bottom: none;
+        }
+
+        .weight-change {
+            font-weight: bold;
+        }
+
+        .weight-change.positive {
+            color: var(--success-color);
+        }
+
+        .weight-change.negative {
+            color: var(--accent-color);
+        }
+
+        .weight-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .weight-value {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .weight-date {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            opacity: 0.8;
+        }
+
+        .weight-change {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .weight-change.positive {
+            color: var(--success-color);
+        }
+
+        .weight-change.negative {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Your Fitness Progress</h1>
+            <p>Track your journey towards your fitness goals</p>
+        </div>
+
+        <div class="progress-summary">
+            <h2><i class="fas fa-chart-line"></i> Overall Progress</h2>
+            <div class="progress-grid" id="progressSummary">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="progress-grid" id="progressCards">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <div class="nav-buttons">
+            <a href="workout-plan.html" class="btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Workout Plan
+            </a>
+            <a href="index.html" class="btn">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Function to generate progress cards based on user data
+        function generateProgressCards() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const fitnessData = JSON.parse(localStorage.getItem('fitnessData'));
+            const progressData = JSON.parse(localStorage.getItem('progressData') || '[]');
+
+            if (!userData || !fitnessData) {
+                window.location.href = 'fitness.html';
+                return;
+            }
+
+            // Update progress summary
+            const progressSummary = document.getElementById('progressSummary');
+            progressSummary.innerHTML = `
+                <div class="progress-item">
+                    <div class="value">${fitnessData.weight}kg</div>
+                    <div class="label">Current Weight</div>
+                </div>
+                <div class="progress-item">
+                    <div class="value">${fitnessData.goalWeight}kg</div>
+                    <div class="label">Goal Weight</div>
+                </div>
+                <div class="progress-item">
+                    <div class="value">${fitnessData.targetCalories}</div>
+                    <div class="label">Daily Calories</div>
+                </div>
+                <div class="progress-item">
+                    <div class="value">${fitnessData.experienceLevel}</div>
+                    <div class="label">Experience Level</div>
+                </div>
+            `;
+
+            // Generate progress cards
+            const progressCards = document.getElementById('progressCards');
+            progressCards.innerHTML = '';
+
+            // Weight Progress Card
+            const weightCard = document.createElement('div');
+            weightCard.className = 'progress-card';
+            weightCard.innerHTML = `
+                <h3><i class="fas fa-weight"></i> Weight Progress</h3>
+                <div class="weight-input">
+                    <input type="number" id="newWeight" placeholder="Enter current weight" step="0.1">
+                    <button onclick="updateWeight()" class="btn-primary">Update Weight</button>
+                </div>
+                <div class="weight-history">
+                    ${progressData.map((entry, index) => {
+                        const change = entry.previousWeight ? (entry.weight - entry.previousWeight).toFixed(1) : '0.0';
+                        const changeClass = change > 0 ? 'positive' : 'negative';
+                        const changeSign = change > 0 ? '+' : '';
+                        return `
+                            <div class="weight-entry">
+                                <div class="weight-info">
+                                    <span class="weight-value">${entry.weight} kg</span>
+                                    <span class="weight-date">${new Date(entry.date).toLocaleDateString()}</span>
+                                    <span class="weight-change ${changeClass}">${changeSign}${change} kg</span>
+                                </div>
+                                <button onclick="deleteWeightEntry(${index})" class="btn-delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            progressCards.appendChild(weightCard);
+
+            // Calorie Progress Card
+            const calorieProgress = document.createElement('div');
+            calorieProgress.className = 'progress-card';
+            calorieProgress.innerHTML = `
+                <h3><i class="fas fa-fire"></i> Calorie Tracking</h3>
+                <div class="progress-info">
+                    <p>Daily Target: <span class="progress-value">${fitnessData.targetCalories} calories</span></p>
+                    <p>Protein: <span class="progress-value">${fitnessData.macros.protein}g</span></p>
+                    <p>Carbs: <span class="progress-value">${fitnessData.macros.carbs}g</span></p>
+                    <p>Fat: <span class="progress-value">${fitnessData.macros.fat}g</span></p>
+                </div>
+                <div class="progress-tags">
+                    <span class="progress-tag">Nutrition</span>
+                    <span class="progress-tag">Macros</span>
+                </div>
+            `;
+            progressCards.appendChild(calorieProgress);
+
+            // Workout Progress Card
+            const workoutProgress = document.createElement('div');
+            workoutProgress.className = 'progress-card';
+            workoutProgress.innerHTML = `
+                <h3><i class="fas fa-dumbbell"></i> Workout Progress</h3>
+                <div class="progress-info">
+                    <p>Experience Level: <span class="progress-value">${fitnessData.experienceLevel}</span></p>
+                    <p>Fitness Goal: <span class="progress-value">${fitnessData.fitnessGoal}</span></p>
+                    <p>Gym Access: <span class="progress-value">${fitnessData.gymAccess === 'yes' ? 'Yes' : 'No'}</span></p>
+                </div>
+                <div class="progress-tags">
+                    <span class="progress-tag">Strength</span>
+                    <span class="progress-tag">${fitnessData.fitnessGoal}</span>
+                </div>
+            `;
+            progressCards.appendChild(workoutProgress);
+        }
+
+        // Initialize progress cards when page loads
+        document.addEventListener('DOMContentLoaded', generateProgressCards);
+
+        // Function to get weight history
+        function getWeightHistory() {
+            const weightHistory = JSON.parse(localStorage.getItem('weightHistory') || '[]');
+            return weightHistory.map(entry => {
+                const change = entry.weight - entry.previousWeight;
+                const changeClass = change > 0 ? 'positive' : 'negative';
+                const changeSign = change > 0 ? '+' : '';
+                return `
+                    <li>
+                        <span>${entry.date}</span>
+                        <span class="weight-change ${changeClass}">${changeSign}${change.toFixed(1)}kg</span>
+                    </li>
+                `;
+            }).join('');
+        }
+
+        // Function to update weight
+        function updateWeight() {
+            const newWeightInput = document.getElementById('newWeight');
+            const newWeight = parseFloat(newWeightInput.value);
+            
+            if (!newWeight || isNaN(newWeight)) {
+                alert('Please enter a valid weight');
+                return;
+            }
+
+            const fitnessData = JSON.parse(localStorage.getItem('fitnessData'));
+            const previousWeight = fitnessData.weight;
+            
+            // Update fitness data
+            fitnessData.weight = newWeight;
+            localStorage.setItem('fitnessData', JSON.stringify(fitnessData));
+
+            // Update progress data
+            const progressData = JSON.parse(localStorage.getItem('progressData') || '[]');
+            progressData.unshift({
+                date: new Date().toISOString(),
+                weight: newWeight,
+                previousWeight: previousWeight
+            });
+            localStorage.setItem('progressData', JSON.stringify(progressData));
+
+            // Refresh the page to show updated data
+            location.reload();
+        }
+
+        // Function to delete weight entry
+        function deleteWeightEntry(index) {
+            if (confirm('Are you sure you want to delete this weight entry?')) {
+                const progressData = JSON.parse(localStorage.getItem('progressData') || '[]');
+                progressData.splice(index, 1);
+                localStorage.setItem('progressData', JSON.stringify(progressData));
+                generateProgressCards();
+            }
+        }
+    </script>
+</body>
+</html> 

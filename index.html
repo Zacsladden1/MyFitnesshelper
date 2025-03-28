@@ -9,24 +9,5 @@
 <body>
     <p>Redirecting to Fitness Planner...</p>
     <p>If you are not redirected automatically, <a href="fitness.html">click here</a>.</p>
-    <script>
-        // Check if user is authenticated
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = 'login.html';
-        }
-
-        // Add logout functionality
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userData');
-            window.location.href = 'login.html';
-        }
-
-        // Add logout button to navigation
-        document.querySelector('.nav-buttons').innerHTML += `
-            <button onclick="logout()" class="btn-secondary">Logout</button>
-        `;
-    </script>
 </body>
 </html>
